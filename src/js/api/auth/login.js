@@ -7,8 +7,13 @@ document.addEventListener("DOMContentLoaded",  () => {
 
     const user = JSON.parse(localStorage.getItem("user"));
 
+    if (!user && window.location.pathname !== "/index.html" && window.location.pathname !== "/") {
+        window.location.href = "/auth/login/";
+    }
+
     if (user) {
         loginSection.style.display = "none";
         logoutBtn.classList.remove("hidden");
         loginLink.classList.add("hidden");
     )
+
