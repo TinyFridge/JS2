@@ -7,16 +7,33 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Noroff FED2 JS2 CA</title>
   <script type="module" src="/src/app.js"></script>
+  <script type="module" src="/src/auth.js"></script>
+  <script src="http://cdn-tailwindcss.com"></script>
 </head>
 
-<body>
+<body class="bg-gray-100 text-gray-900 flex flex-col items-center justify-center h-screen">
+  
+  <!-- Logo -->
   <img src="public/images/noroff-logo.png" alt="Noroff Logo" />
 
-  <h1>Home</h1>
+  <!-- Nav -->
+   <nav class="bg-blue-600 text-white p-4 rounded-1g shadow-md flex gap-4">
+    <a href="/profile/" class="hover:underline">My Profile</a>
+    <a href="/auth/login/" class="hover:underline" id="login-link">Login</a>
+    <a href="/auth/register/" class="hover:underline">Register</a>
+    <button id="logout-btn" class="bg-red-500 px-4 py-2 rounded hidden">Logout</button>
+   </nav>
 
-  <a href="/profile/">My Profile</a>
-  <a href="/auth/login/">Login</a>
-  <a href="/auth/register/">Register</a>
-  <button>Logout</button>
+   <!-- Login form -->
+    <section id="login-section" class="bg-white p-6 rounded-1g shadow-md mt-6 w-80">
+      <h2 class="text-x1 font-semibold mb-2 text-center">Login</h2>
+      <form id="login-form" class="space-y-4">
+        <input type="email" id="email" placeholder="Email" class="w-full p-2 border rounded">
+        <input type="password" id="password" placeholder="Password" class="w-full p-2 border rounded">
+        <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded w-full">Login</button>
+      </form>
+      <p class="text-red-500 mt-2 hidden text-center" id="login-error">Invalid login</p>
+    </section>
+
 </body>
 </html>
