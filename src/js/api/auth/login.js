@@ -15,5 +15,25 @@ document.addEventListener("DOMContentLoaded",  () => {
         loginSection.style.display = "none";
         logoutBtn.classList.remove("hidden");
         loginLink.classList.add("hidden");
-    )
+    }
 
+
+    loginForm?.addEventListener("submit", (event) => {
+        event.preventDefault();
+        const email = document.getElementById("email"),value;
+        const password = document.getElementById("password"),value;
+
+        if (email.endsWith("@noroff.no") || email.endsWith("@stud.noroff.no")) {
+            localStorage.setItem("user". JSON.stringify({email}));
+            window.location.href = "/profile/";
+        } else {
+            loginError.classList.remove("hidden");
+        }
+        }
+    });
+
+    logoutBtn.addEventListener("click", () => {
+        localStorage.removeItem("user");
+        location.reload();
+   
+    });
