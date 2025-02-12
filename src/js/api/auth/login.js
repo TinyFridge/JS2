@@ -2,7 +2,6 @@ document.addEventListener("DOMContentLoaded",  () => {
     const loginForm = document.getElementById("login-form");
     const loginSection = document.getElementById("login-section");
     const loginError = document.getElementById("login-error");
-    const logoutBtn = document.getElementById("logout-btn");
     const loginLink = document.getElementById("login-link");
 
     const user = JSON.parse(localStorage.getItem("user"));
@@ -20,7 +19,7 @@ document.addEventListener("DOMContentLoaded",  () => {
 
     loginForm?.addEventListener("submit", (event) => {
         event.preventDefault();
-        const email = document.getElementById("email"),value;
+        const email = document.getElementById("email").value;
         const password = document.getElementById("password"),value;
 
         if (email.endsWith("@noroff.no") || email.endsWith("@stud.noroff.no")) {
