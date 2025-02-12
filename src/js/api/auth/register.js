@@ -13,4 +13,8 @@ export function onRegister(event) {
     errorElement.textContent = "Email must be a valid Noroff email";
     errorElement.classList.remove("hidden");
   }
+
+  if (password !== confirmPassword) {
+    
+  }
 }
