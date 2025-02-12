@@ -8,4 +8,9 @@ export function onRegister(event) {
 
   errorElement.classList.add("hidden");
   errorElement.textContent = "";
+
+  if (!email.endsWith("@noroff.no") && !email.endsWith("@stud.noroff.no")) {
+    errorElement.textContent = "Email must be a valid Noroff email";
+    errorElement.classList.remove("hidden");
+  }
 }
