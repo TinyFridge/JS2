@@ -16,21 +16,16 @@
   <!-- Logo -->
   <img src="/images/noroff-logo.png" alt="Noroff Logo" />
 
-  <!-- Nav -->
-   <nav class="bg-blue-600 text-white p-4 rounded-1g shadow-md flex gap-4">
-    <a href="/profile/" class="hover:underline">My Profile</a>
-    <a href="/auth/login/" class="hover:underline" id="login-link">Login</a>
-    <a href="/auth/register/" class="hover:underline">Register</a>
-    <button id="logout-btn" class="bg-red-500 px-4 py-2 rounded hidden">Logout</button>
-   </nav>
-
    <!-- Login form -->
-    <section id="login-section" class="bg-white p-6 rounded-1g shadow-md mt-6 w-80">
-      <h2 class="text-x1 font-semibold mb-2 text-center">Login</h2>
+    <section id="login-section" class="bg-white p-6 rounded-1g shadow-md mt-6 w-80 text-center">
+      <h2 class="text-x1 font-semibold mb-2">Login</h2>
       <form id="login-form" class="space-y-4">
         <input type="email" id="email" placeholder="Email" class="w-full p-2 border rounded">
         <input type="password" id="password" placeholder="Password" class="w-full p-2 border rounded">
-        <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded w-full">Login</button>
+        <div class="flex justify-between gap-4">
+          <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded w-full">Login</button>
+          <a href="/auth/register/index.html" class="bg-green-600 text-white px-4 py-2 rounded w-full text-center">Register</a>
+        </div>  
       </form>
       <p class="text-red-500 mt-2 hidden text-center" id="login-error">Invalid login</p>
     </section>
