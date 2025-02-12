@@ -2,9 +2,17 @@ import { resolve } from "path";
 import { defineConfig } from "vite";
 import tailwindcss from "@tailwindcss/vite"
 
+// vite.config.js
+import ViteRestart from 'vite-plugin-restart'
+
 export default defineConfig({
   plugins: [
     tailwindcss(),
+    ViteRestart({
+      restart:  [
+        'my.config.[jt]s',
+      ]
+    })
   ],
   appType: "mpa",
   base: "",
