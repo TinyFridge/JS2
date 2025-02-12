@@ -4,15 +4,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const user = JSON.parse(localStorage.getItem("user"));
 
+    const allowedPages = ["/", "/index.html", "/register.html"];
 
-    const isAuthPage = window.location.pathname === "/" || 
-                       window.location.pathname.endsWith("index.html") || 
-                       window.location.pathname.endsWith("register.html");
+    console.log("Current path:", window.location.pathname);
+    console.log("User found:", user);
 
-    if (!user && !isAuthPage) {
-    
-        window.location.href = "/index.html"; 
+    if (!user && !allowedPages.includes(window.location.pathname)) {
+    console.log("Redirecting to index.html...");
+    window.location.href = "/index.html";
     }
+
 
     if (loginForm) {
         loginForm.addEventListener("submit", (event) => {
@@ -21,7 +22,6 @@ document.addEventListener("DOMContentLoaded", () => {
             const email = document.getElementById("email").value;
             const password = document.getElementById("password").value;
 
-        
             if (email.endsWith("@noroff.no") || email.endsWith("@stud.noroff.no")) {
                 localStorage.setItem("user", JSON.stringify({ email }));
                 window.location.href = "/profile.html";
