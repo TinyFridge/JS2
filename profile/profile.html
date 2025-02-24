@@ -2,16 +2,24 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Noroff FED2 JS2 CA</title>
-    <script type="module" src="/src/app.js"></script>
+    <title>Profile - Noroff FED2 JS2 CA</title>
+    <script type="module" src="/src/js/router/views/profile.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
   </head>
-  <body>
-    <h1>Profile</h1>
 
-    <form name="updateProfile">
-      <button>Update Profile</button>
+  <body class="bg-gray-100 text-gray-900">
+    <header class="bg-blue-600 text-white p-4 flex items-center justify-between">
+      <h1 class="text-2x1 font-bold">My Profile</h1>
+      <button id="logout-btn" class="bg-red-500 px-4 py-2 rounded">Logout</button>
+    </header>
+    
+    <main class="max-w-4x1 mx-auto p-6">
+      <section id="profile-info" class="bg-white p-6 rounded-1g shadow-md">
+        <h2 class="text-x1 font-semibold mb-4">Profile Details</h2>
+        <p id="user-email" class="text-1g"></p>
+      </section>
+    </main>
     </form>
   </body>
 </html>
