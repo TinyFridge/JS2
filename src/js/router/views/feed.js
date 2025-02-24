@@ -44,8 +44,23 @@ async function loadFeed() {
 
     feedContainer.innerHTML = "";
     posts.forEach((post) => {
-      const postEl = document.createElement("div");
-      postEl.classList.add("bg-white", "p-4", "rounded", "shadow");
+        const postEl = document.createElement("div");
+        postEl.classList.add(
+          "bg-white", "p-4", "rounded-xl", "shadow-lg", "overflow-hidden", "transition", "hover:shadow-xl"
+        );
+        postEl.innerHTML = `
+          <div class="flex flex-col h-full">
+            <div class="p-4 flex-grow">
+              <h2 class="text-xl font-bold mb-2 text-blue-700">${post.title}</h2>
+              <p class="text-gray-700">${post.content}</p>
+            </div>
+            <div class="p-4 bg-gray-100 flex justify-between">
+              <button class="edit-btn text-blue-500 hover:text-blue-700" data-id="${post.id}">Edit</button>
+              <button class="delete-btn text-red-500 hover:text-red-700" data-id="${post.id}">Delete</button>
+            </div>
+          </div>
+        `;
+        
 
       postEl.innerHTML = `
         <h2 class="text-xl font-bold">${post.title}</h2>
