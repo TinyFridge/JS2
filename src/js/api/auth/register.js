@@ -1,3 +1,8 @@
+import { onRegister } from "../../ui/auth/register";
+
+const form = document.forms.register;
+form.addEventListener("submit", onRegister);
+
 export function onRegister(event) {
   event.preventDefault();
 
@@ -12,9 +17,17 @@ export function onRegister(event) {
   if (!email.endsWith("@noroff.no") && !email.endsWith("@stud.noroff.no")) {
     errorElement.textContent = "Email must be a valid Noroff email";
     errorElement.classList.remove("hidden");
+    return;
   }
 
   if (password !== confirmPassword) {
-    
+    errorElement.textContent = "Passwords do not match";
+    errorElement.classList.remove("hidden");
+    return;
   }
+
+  localStorage.setItem("token", "some-generated-token");
+  localStorage.setItem("user", JSON.stringify({ email }));
+
+  window.location.href = "/profile.html";
 }
