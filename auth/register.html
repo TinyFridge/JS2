@@ -10,16 +10,14 @@
 
 <body class="bg-gray-100 text-gray-900 flex flex-col items-center justify-center h-screen">
 
-    <!-- Logo -->
      <img src="/public/images/noroff-logo.png" alt="Noroff Logo" class="h-16 mb-6">
 
-     <!-- Registration form -->
       <section id="register-section" class="bg-white p-6 rounded-1g shadow-md w-80 text-center">
         <h2 class="text-x1 font-semibold mb-4">Register</h2>
         <form name="register" class="space-y-4">
             <input type="email" id="email" placeholder="Email" required class="w-full p-2 border rounded">
             <input type="password" id="password" placeholder="Password" required class="w-full p-2 border rounded">
-            <input type="password" id="password" placeholder="Confirm Password" required class="w-full p-2 border rounded">
+            <input type="password" id="confirmPassword" placeholder="Confirm Password" required class="w-full p-2 border rounded">
             <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded w-full">Register</button>
         </form>
         <p id="register-error" class="text-red-500 mt-2 hidden"></p>
