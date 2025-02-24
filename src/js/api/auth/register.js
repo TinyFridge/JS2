@@ -41,5 +41,5 @@ export function onRegister(event) {
   localStorage.setItem("token", "some-generated-token");
   localStorage.setItem("user", JSON.stringify({ email }));
 
-  window.location.href = "/auth/profile/profile.html";
+  window.location.href = "/profile/profile.html";
 }
