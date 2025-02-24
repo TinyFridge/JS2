@@ -1,18 +1,33 @@
-import { createPost } from "../../api/post/create.js";
-import { readPosts } from "../../api/post/read.js";
-import { updatePost } from "../../api/post/update.js";
-import { deletePost } from "../../api/post/delete.js";
+import { createPost } from "@api/create.js";
+import { readPosts } from "@api/read.js";
+import { updatePost } from "@api/update.js";
+import { deletePost } from "@api/delete.js";
 
-document.addEventListener("DOMContentLoaded", async () => {
+document.addEventListener("DOMContentLoaded", () => {
   loadFeed();
 
+  const createForm = document.getElementById("create-post-form");
 
-  const createBtn = document.getElementById("create-post-btn");
-  createBtn.addEventListener("click", async () => {
+  createForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
 
-    const newPost = { title: "New Post", content: "This is the post content" };
-    await createPost(newPost);
-    loadFeed();
+    const title = document.getElementById("post-title").value.trim();
+    const content = document.getElementById("post-content").value.trim();
+
+    if (!title || !content) {
+      alert("Title and content cannot be empty!");
+      return;
+    }
+
+    try {
+      console.log("Attempting to create post:", { title, content });
+      await createPost({ title, content });
+      createForm.reset();
+      loadFeed();
+    } catch (error) {
+      console.error("Error creating post:", error);
+      alert(`Failed to create post: ${error.message}`);
+    }
   });
 });
 
@@ -22,45 +37,28 @@ async function loadFeed() {
 
   try {
     const posts = await readPosts();
+
+    if (!Array.isArray(posts)) {
+      throw new Error("API did not return a valid post list");
+    }
+
     feedContainer.innerHTML = "";
-    posts.forEach(post => {
-      const postElement = document.createElement("div");
-      postElement.classList.add("bg-white", "p-4", "rounded", "shadow");
-      postElement.innerHTML = `
+    posts.forEach((post) => {
+      const postEl = document.createElement("div");
+      postEl.classList.add("bg-white", "p-4", "rounded", "shadow");
+
+      postEl.innerHTML = `
         <h2 class="text-xl font-bold">${post.title}</h2>
         <p>${post.content}</p>
         <div class="mt-2 flex gap-2">
-          <button data-id="${post.id}" class="edit-btn bg-blue-500 text-white px-2 py-1 rounded">Edit</button>
-          <button data-id="${post.id}" class="delete-btn bg-red-500 text-white px-2 py-1 rounded">Delete</button>
+          <button class="edit-btn bg-blue-500 text-white px-2 py-1 rounded" data-id="${post.id}">Edit</button>
+          <button class="delete-btn bg-red-500 text-white px-2 py-1 rounded" data-id="${post.id}">Delete</button>
         </div>
       `;
-      feedContainer.appendChild(postElement);
-    });
-
-  
-    document.querySelectorAll(".delete-btn").forEach(button => {
-      button.addEventListener("click", async (e) => {
-        const postId = e.target.getAttribute("data-id");
-        if (confirm("Are you sure you want to delete this post?")) {
-          await deletePost(postId);
-          loadFeed();
-        }
-      });
-    });
-
-
-    document.querySelectorAll(".edit-btn").forEach(button => {
-      button.addEventListener("click", async (e) => {
-        const postId = e.target.getAttribute("data-id");
-
-
-        const updatedPost = { title: "Updated Title", content: "Updated content" };
-        await updatePost(postId, updatedPost);
-        loadFeed();
-      });
+      feedContainer.appendChild(postEl);
     });
   } catch (error) {
-    feedContainer.innerHTML = "<p>Failed to load posts</p>";
-    console.error(error);
+    feedContainer.innerHTML = `<p class="text-red-500">Error loading posts: ${error.message}</p>`;
+    console.error("Error loading posts:", error);
   }
 }

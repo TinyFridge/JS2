@@ -1,19 +1,21 @@
 import { resolve } from "path";
 import { defineConfig } from "vite";
-import tailwindcss from "@tailwindcss/vite"
-
-// vite.config.js
-import ViteRestart from 'vite-plugin-restart'
+import tailwindcss from "@tailwindcss/vite";
+import ViteRestart from "vite-plugin-restart";
 
 export default defineConfig({
   plugins: [
     tailwindcss(),
     ViteRestart({
-      restart:  [
-        'my.config.[jt]s',
-      ]
-    })
+      restart: ["my.config.[jt]s"],
+    }),
   ],
+  resolve: {
+    alias: {
+      "@api": resolve(__dirname, "src/js/api/post"),
+      "@constants": resolve(__dirname, "src/js/api/constants.js"),
+    },
+  },
   appType: "mpa",
   base: "",
   build: {

@@ -1,28 +1,36 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Post Feed - Noroff FED2 JS2 CA</title>
-    <script type="module" src="/src/js/router/views/feed.js"></script>
-    <script src="https://cdn.tailwindcss.com"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Post Feed</title>
+  <script type="module" src="/src/js/router/views/feed.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
-
 <body class="bg-gray-100 text-gray-900">
-    <header class="bg-blue-600 text-white p-4 flex justify-between items-center">
-        <h1 class="text-2xl font-bold">Post Feed</h1>
-        <div class="flex items-center space-x-4">
-          <a href="/feed.html" class="text-white hover:underline">Feed</a>
-          <a href="/profile/profile.html" class="text-white hover:underline">Profile</a>
-          <button id="logout-btn" class="text-white hover:underline">Logout</button>
-        </div>
-      </header>
-      
-    <main class="max-w-4x1 mx-auto p-6">
-        <div id="post-feed" class="space-y-4">
 
-        </div>
-    </main>
-    
+  <header class="bg-blue-600 text-white p-4 flex justify-between items-center">
+    <h1 class="text-2xl font-bold">Post Feed</h1>
+    <div class="flex items-center space-x-4">
+      <a href="/feed.html" class="text-white hover:underline">Feed</a>
+      <a href="/profile/profile.html" class="text-white hover:underline">Profile</a>
+      <button id="logout-btn" class="text-white hover:underline">Logout</button>
+    </div>
+  </header>
+
+  <section class="max-w-4xl mx-auto p-6">
+    <form id="create-post-form" class="bg-white p-4 rounded shadow mb-6">
+      <h2 class="text-xl mb-4">Create New Post</h2>
+      <input type="text" id="post-title" placeholder="Title" class="w-full p-2 border rounded mb-2" required />
+      <textarea id="post-content" placeholder="Content" class="w-full p-2 border rounded mb-2" required></textarea>
+      <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded">Add Post</button>
+    </form>
+  </section>
+
+  <section class="max-w-4xl mx-auto p-6">
+    <div id="post-feed" class="space-y-4">
+
+    </div>
+  </section>
 </body>
 </html>

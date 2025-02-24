@@ -1,18 +1,24 @@
-import { API_SOCIAL_POSTS } from "../constants.js";
+import { API_SOCIAL_POSTS } from "@constants";
 
-export async function readPosts() {
+export async function updatePost(postId, postData) {
   try {
-    const response = await fetch(API_SOCIAL_POSTS, {
-      method: "PUT",
-      headers: getAuthHeaders()
+    const accessToken = JSON.parse(localStorage.getItem("user")).accessToken;
+    const apiKey = localStorage.getItem("apiKey");
+    const response = await fetch(`${API_SOCIAL_POSTS}/${postId}`, {
+      method: "PUT", // Or use PATCH if preferred
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${accessToken}`,
+        "X-Noroff-API-Key": apiKey
+      },
+      body: JSON.stringify(postData)
     });
     if (!response.ok) {
-      throw new Error("Failed to fetch posts");
+      throw new Error("Failed to update post");
     }
     return await response.json();
   } catch (error) {
     console.error(error);
-    alert("Error fetching posts");
-    return [];
+    throw error;
   }
 }
