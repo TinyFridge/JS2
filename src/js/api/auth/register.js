@@ -43,6 +43,7 @@ export async function onRegister(event) {
     errorElement.classList.remove("hidden");
     return;
   }
+
   if (password !== confirmPassword) {
     errorElement.textContent = "Passwords do not match";
     errorElement.classList.remove("hidden");
@@ -65,11 +66,13 @@ export async function onRegister(event) {
     if (!response.ok) {
       const errorData = await response.json();
       console.error("Error details:", errorData.errors);
-      if (errorData.errors && errorData.errors[0].message === "Profile already exists") {
+
+      if (errorData.errors && errorData.errors[0]?.message === "Profile already exists") {
         errorElement.textContent = "A profile with this email already exists. Please use a different email.";
       } else {
         errorElement.textContent = "Registration failed: " + (errorData.error || "Unknown error");
       }
+
       errorElement.classList.remove("hidden");
       return;
     }

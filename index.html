@@ -1,9 +1,7 @@
 <!doctype html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8" />
-
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Noroff FED2 JS2 CA</title>
   <script type="module" src="/src/app.js"></script>
@@ -12,23 +10,19 @@
 </head>
 
 <body class="bg-gray-100 text-gray-900 flex flex-col items-center justify-center h-screen">
-  
-  <!-- Logo -->
   <img src="/images/noroff-logo.png" alt="Noroff Logo" />
 
-   <!-- Login form -->
-    <section id="login-section" class="bg-white p-6 rounded-1g shadow-md mt-6 w-80 text-center">
-      <h2 class="text-x1 font-semibold mb-2">Login</h2>
-      <form id="login-form" class="space-y-4">
-        <input type="email" id="email" placeholder="Email" class="w-full p-2 border rounded">
-        <input type="password" id="password" placeholder="Password" class="w-full p-2 border rounded">
-        <div class="flex justify-between gap-4">
-          <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded w-full">Login</button>
-          <a href="/auth/register.html" class="bg-green-600 text-white px-4 py-2 rounded w-full text-center">Register</a>
-        </div>  
-      </form>
-      <p class="text-red-500 mt-2 hidden text-center" id="login-error">Invalid login</p>
-    </section>
-
+  <section id="login-section" class="bg-white p-6 rounded-lg shadow-md mt-6 w-80 text-center">
+    <h2 class="text-xl font-semibold mb-2">Login</h2>
+    <form id="login-form" class="space-y-4">
+      <input type="email" id="email" placeholder="Email" class="w-full p-2 border rounded">
+      <input type="password" id="password" placeholder="Password" class="w-full p-2 border rounded">
+      <div class="flex justify-between gap-4">
+        <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded w-full">Login</button>
+        <a href="/auth/register.html" class="bg-green-600 text-white px-4 py-2 rounded w-full text-center">Register</a>
+      </div>  
+    </form>
+    <p class="text-red-500 mt-2 hidden text-center" id="login-error">Invalid login</p>
+  </section>
 </body>
 </html>

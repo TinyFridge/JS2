@@ -12,7 +12,7 @@ export async function updatePost(postId, postData) {
     console.log(`Updating post ID: ${postId} with data:`, postData);
 
     const response = await fetch(`${API_SOCIAL_POSTS}/${postId}`, {
-      method: "PUT", // Use "PATCH" if the API requires partial updates
+      method: "PUT",
       headers: {
         "Content-Type": "application/json",
         "Authorization": `Bearer ${accessToken}`,

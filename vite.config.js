@@ -7,7 +7,7 @@ export default defineConfig({
   plugins: [
     tailwindcss(),
     ViteRestart({
-      restart: ["my.config.[jt]s"],
+      restart: ["vite.config.js"],
     }),
   ],
   resolve: {
@@ -17,19 +17,16 @@ export default defineConfig({
     },
   },
   appType: "mpa",
-  base: "",
+  base: "/",
   build: {
     target: "esnext",
     rollupOptions: {
       input: {
-        main: resolve(__dirname, "./index.html"),
-        login: resolve(__dirname, "./auth/login/index.html"),
-        auth: resolve(__dirname, "./auth/index.html"),
-        register: resolve(__dirname, "./auth/register/index.html"),
-        profile: resolve(__dirname, "./profile/index.html"),
-        post: resolve(__dirname, "./post/index.html"),
-        editPost: resolve(__dirname, "./post/edit/index.html"),
-        createPost: resolve(__dirname, "./post/create/index.html"),
+        main: resolve(__dirname, "index.html"),
+        login: resolve(__dirname, "index.html"),
+        register: resolve(__dirname, "auth/register.html"),
+        profile: resolve(__dirname, "profile/profile.html"),
+        feed: resolve(__dirname, "feed/feed.html"),
       },
     },
   },
