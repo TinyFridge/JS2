@@ -1,26 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Register - Noroff FED 2 JS2 CA</title>
     <script type="module" src="/src/js/api/auth/register.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
-</head>
-
-<body class="bg-gray-100 text-gray-900 flex flex-col items-center justify-center h-screen">
-
-     <img src="/public/images/noroff-logo.png" alt="Noroff Logo" class="h-16 mb-6">
-
-      <section id="register-section" class="bg-white p-6 rounded-1g shadow-md w-80 text-center">
-        <h2 class="text-x1 font-semibold mb-4">Register</h2>
-        <form name="register" class="space-y-4">
-            <input type="email" id="email" placeholder="Email" required class="w-full p-2 border rounded">
-            <input type="password" id="password" placeholder="Password" required class="w-full p-2 border rounded">
-            <input type="password" id="confirmPassword" placeholder="Confirm Password" required class="w-full p-2 border rounded">
-            <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded w-full">Register</button>
-        </form>
-        <p id="register-error" class="text-red-500 mt-2 hidden"></p>
-      </section>    
-</body>
+  </head>
+  <body class="bg-gray-100 text-gray-900 flex flex-col items-center justify-center h-screen">
+    <img src="/public/images/noroff-logo.png" alt="Noroff Logo" class="h-16 mb-6">
+    <section id="register-section" class="bg-white p-6 rounded-lg shadow-md w-80 text-center">
+      <h2 class="text-xl font-semibold mb-4">Register</h2>
+      <form name="register" class="space-y-4">
+        <input type="text" id="name" placeholder="Name" required class="w-full p-2 border rounded" />
+        <input type="email" id="email" placeholder="Email" required class="w-full p-2 border rounded" />
+        <input type="password" id="password" placeholder="Password" required class="w-full p-2 border rounded" />
+        <input type="password" id="confirmPassword" placeholder="Confirm Password" required class="w-full p-2 border rounded" />
+        <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded w-full">Register</button>
+      </form>
+      <p id="register-error" class="text-red-500 mt-2 hidden"></p>
+    </section>
+  </body>
 </html>
