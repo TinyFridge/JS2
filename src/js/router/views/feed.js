@@ -16,10 +16,10 @@ async function handleCreatePost(event) {
   }
 
   try {
-    const postData = {
-      title,
+    const postData = { 
+      title, 
       body: content,
-      media: imageUrl || null
+      media: imageUrl ? { url: imageUrl, alt: "" } : null
     };
 
     await createPost(postData);
@@ -87,7 +87,9 @@ function renderPosts(posts) {
       ? post.body
       : ((post.content && post.content.trim() !== "") ? post.content : "No content available");
 
-    const imageHTML = post.media ? `<img src="${post.media}" alt="Post image" class="w-full h-auto mb-2 rounded">` : "";
+    const imageHTML = (post.media && post.media.url)
+      ? `<img src="${post.media.url}" alt="${post.media.alt || "Post image"}" class="w-full h-auto mb-2 rounded">`
+      : "";
 
     const isUserPost = post.tags.includes(username);
     const editDeleteButtons = isUserPost
@@ -107,7 +109,7 @@ function renderPosts(posts) {
     `;
 
     postEl.setAttribute("data-original-content", post.body || post.content || "");
-    postEl.setAttribute("data-original-media", post.media || "");
+    postEl.setAttribute("data-original-media", post.media ? JSON.stringify(post.media) : "");
 
     postContainer.appendChild(postEl);
   });
@@ -132,11 +134,16 @@ function attachPostEventListeners() {
 
       const originalTitle = postEl.querySelector("h2").textContent;
       const originalContent = postEl.getAttribute("data-original-content");
-      const originalMedia = postEl.getAttribute("data-original-media");
+
+      let originalMedia = "";
+      try {
+        originalMedia = JSON.parse(postEl.getAttribute("data-original-media")).url || "";
+      } catch {
+        originalMedia = "";
+      }
 
       const editForm = document.createElement("div");
       editForm.classList.add("edit-panel", "mt-4", "p-4", "bg-gray-50", "rounded");
-
       editForm.innerHTML = `
         <input type="text" class="edit-title w-full p-2 border rounded mb-2" value="${originalTitle}">
         <textarea class="edit-content w-full p-2 border rounded mb-2">${originalContent}</textarea>
@@ -158,7 +165,11 @@ function attachPostEventListeners() {
         }
 
         try {
-          await updatePost(postId, { title: newTitle, body: newContent, media: newImage || null });
+          await updatePost(postId, { 
+            title: newTitle, 
+            body: newContent, 
+            media: newImage ? { url: newImage, alt: "" } : null 
+          });
           await loadPosts();
         } catch (error) {
           console.error("Error updating post:", error);
@@ -199,7 +210,9 @@ async function openModal(postId) {
     }
 
     const contentText = post.body || post.content || "No content available";
-    const imageHTML = post.media ? `<img src="${post.media}" alt="Post image" class="w-full h-auto mb-2 rounded">` : "";
+    const imageHTML = (post.media && post.media.url)
+      ? `<img src="${post.media.url}" alt="${post.media.alt || "Post image"}" class="w-full h-auto mb-2 rounded">`
+      : "";
 
     document.getElementById("modal-title").textContent = post.title;
     document.getElementById("modal-content").innerHTML = `${imageHTML}<p>${contentText}</p>`;

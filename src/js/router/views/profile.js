@@ -37,35 +37,37 @@ async function loadMyPosts(userEmail) {
   myPostsContainer.innerHTML = "<p>Loading your posts...</p>";
 
   try {
-    let posts = await readPosts();
+    const posts = await readPosts();
     console.log("All posts fetched:", posts);
     if (!Array.isArray(posts)) {
       throw new Error("Invalid API response format");
     }
     const username = userEmail.split("@")[0];
     console.log("Filtering posts for username:", username);
-    
+
     const userPosts = posts.filter(post =>
       Array.isArray(post.tags) && post.tags.includes(username)
     );
     console.log("Filtered user posts:", userPosts);
-    
+
     if (userPosts.length === 0) {
       myPostsContainer.innerHTML = "<p class='text-gray-500'>You haven't created any posts yet.</p>";
       return;
     }
-    
+
     myPostsContainer.innerHTML = "";
     userPosts.forEach(post => {
       const contentText = (post.body && post.body.trim() !== "")
         ? post.body
         : ((post.content && post.content.trim() !== "") ? post.content : "No content available");
-
-      const imageHTML = post.media ? `<img src="${post.media}" alt="Post image" class="w-full h-auto mb-2 rounded">` : "";
       
+      const imageHTML = (post.media && post.media.url)
+        ? `<img src="${post.media.url}" alt="${post.media.alt || "Post image"}" class="w-full h-auto mb-2 rounded">`
+        : "";
+
       const postEl = document.createElement("div");
       postEl.classList.add("bg-white", "p-4", "rounded-xl", "shadow-lg", "mb-4");
-      
+
       postEl.innerHTML = `
         <h2 class="text-xl font-bold">${post.title}</h2>
         ${imageHTML}
@@ -76,13 +78,13 @@ async function loadMyPosts(userEmail) {
           <button class="delete-btn bg-red-500 text-white px-2 py-1 rounded" data-id="${post.id}">Delete</button>
         </div>
       `;
-      
+
       postEl.setAttribute("data-original-content", post.body || post.content || "");
-      postEl.setAttribute("data-original-media", post.media || "");
-      
+      postEl.setAttribute("data-original-media", post.media ? JSON.stringify(post.media) : "");
+
       myPostsContainer.appendChild(postEl);
     });
-    
+
     attachProfileEventListeners();
   } catch (error) {
     console.error("Error loading posts:", error);
@@ -115,7 +117,12 @@ function attachProfileEventListeners() {
 
       const originalTitle = postEl.querySelector("h2").textContent;
       const originalContent = postEl.getAttribute("data-original-content");
-      const originalMedia = postEl.getAttribute("data-original-media");
+      let originalMedia = "";
+      try {
+        originalMedia = JSON.parse(postEl.getAttribute("data-original-media")).url || "";
+      } catch {
+        originalMedia = "";
+      }
 
       const editForm = document.createElement("div");
       editForm.classList.add("edit-panel", "mt-4", "p-4", "bg-gray-50", "rounded");
@@ -140,7 +147,11 @@ function attachProfileEventListeners() {
         }
 
         try {
-          await updatePost(postId, { title: newTitle, body: newContent, media: newImage || null });
+          await updatePost(postId, { 
+            title: newTitle, 
+            body: newContent, 
+            media: newImage ? { url: newImage, alt: "" } : null 
+          });
           await loadMyPosts(JSON.parse(localStorage.getItem("user")).email);
         } catch (error) {
           console.error("Error updating post:", error);
