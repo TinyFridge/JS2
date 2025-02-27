@@ -4,43 +4,48 @@ import { deletePost } from "@api/delete.js";
 import { updatePost } from "@api/update.js";
 
 async function handleCreatePost(event) {
-    event.preventDefault();
-    
-    const title = document.getElementById("post-title").value.trim();
-    const content = document.getElementById("post-content").value.trim();
-    
-    if (!title || !content) {
-      alert("Title and content cannot be empty.");
-      return;
-    }
-  
-    try {
-      const postData = { title, content };
-      await createPost(postData);
-      
-      document.getElementById("post-title").value = "";
-      document.getElementById("post-content").value = "";
-  
-      await loadPosts();
-    } catch (error) {
-      console.error("Error creating post:", error);
-      alert(`Failed to create post: ${error.message}`);
-    }
-  }
-  
+  event.preventDefault();
 
-  document.addEventListener("DOMContentLoaded", async () => {
-    console.log("🚀 Feed Page Loaded");
-  
+  const title = document.getElementById("post-title").value.trim();
+  const content = document.getElementById("post-content").value.trim();
+  const imageUrl = document.getElementById("post-image").value.trim();
+
+  if (!title || !content) {
+    alert("Title and content cannot be empty.");
+    return;
+  }
+
+  try {
+    const postData = {
+      title,
+      body: content,
+      media: imageUrl || null
+    };
+
+    await createPost(postData);
+
+    document.getElementById("post-title").value = "";
+    document.getElementById("post-content").value = "";
+    document.getElementById("post-image").value = "";
+
     await loadPosts();
-  
-    document.getElementById("create-post-form")?.addEventListener("submit", handleCreatePost);
-    document.getElementById("filter-options")?.addEventListener("change", applyFilters);
-    document.getElementById("search-posts")?.addEventListener("input", applyFilters);
-    document.getElementById("close-modal")?.addEventListener("click", closeModal);
-    document.getElementById("logout-btn")?.addEventListener("click", handleLogout);
-  });
-  
+  } catch (error) {
+    console.error("Error creating post:", error);
+    alert(`Failed to create post: ${error.message}`);
+  }
+}
+
+document.addEventListener("DOMContentLoaded", async () => {
+  console.log("🚀 Feed Page Loaded");
+
+  await loadPosts();
+
+  document.getElementById("create-post-form")?.addEventListener("submit", handleCreatePost);
+  document.getElementById("filter-options")?.addEventListener("change", applyFilters);
+  document.getElementById("search-posts")?.addEventListener("input", applyFilters);
+  document.getElementById("close-modal")?.addEventListener("click", closeModal);
+  document.getElementById("logout-btn")?.addEventListener("click", handleLogout);
+});
 
 async function loadPosts() {
   const postContainer = document.getElementById("post-feed");
@@ -49,7 +54,6 @@ async function loadPosts() {
   try {
     const posts = await readPosts();
     console.log("📌 All posts from API:", posts);
-
     renderPosts(posts);
   } catch (error) {
     console.error("❌ Error loading posts:", error);
@@ -79,13 +83,11 @@ function renderPosts(posts) {
     const postEl = document.createElement("div");
     postEl.classList.add("bg-white", "p-4", "rounded-xl", "shadow-lg");
 
-    const contentText = (post.body !== null && post.body !== undefined && post.body !== "")
+    const contentText = (post.body && post.body.trim() !== "")
       ? post.body
-      : ((post.content !== null && post.content !== undefined && post.content !== "") 
-          ? post.content 
-          : "No content available");
+      : ((post.content && post.content.trim() !== "") ? post.content : "No content available");
 
-    postEl.setAttribute("data-original-content", (post.body || post.content || ""));
+    const imageHTML = post.media ? `<img src="${post.media}" alt="Post image" class="w-full h-auto mb-2 rounded">` : "";
 
     const isUserPost = post.tags.includes(username);
     const editDeleteButtons = isUserPost
@@ -95,6 +97,7 @@ function renderPosts(posts) {
 
     postEl.innerHTML = `
       <h2 class="text-xl font-bold">${post.title}</h2>
+      ${imageHTML}
       <p>${contentText}</p>
       <small class="text-gray-500">Created: ${new Date(post.created).toLocaleString()}</small>
       <div class="mt-2 flex gap-2">
@@ -102,6 +105,9 @@ function renderPosts(posts) {
         ${editDeleteButtons}
       </div>
     `;
+
+    postEl.setAttribute("data-original-content", post.body || post.content || "");
+    postEl.setAttribute("data-original-media", post.media || "");
 
     postContainer.appendChild(postEl);
   });
@@ -124,14 +130,17 @@ function attachPostEventListeners() {
 
       document.querySelectorAll(".edit-panel").forEach(panel => panel.remove());
 
+      const originalTitle = postEl.querySelector("h2").textContent;
       const originalContent = postEl.getAttribute("data-original-content");
+      const originalMedia = postEl.getAttribute("data-original-media");
 
       const editForm = document.createElement("div");
       editForm.classList.add("edit-panel", "mt-4", "p-4", "bg-gray-50", "rounded");
 
       editForm.innerHTML = `
-        <input type="text" class="edit-title w-full p-2 border rounded mb-2" value="${postEl.querySelector("h2").textContent}">
+        <input type="text" class="edit-title w-full p-2 border rounded mb-2" value="${originalTitle}">
         <textarea class="edit-content w-full p-2 border rounded mb-2">${originalContent}</textarea>
+        <input type="text" class="edit-image w-full p-2 border rounded mb-2" placeholder="Image URL (optional)" value="${originalMedia}">
         <button class="save-edit bg-green-600 text-white px-4 py-2 rounded" data-id="${postId}">Save</button>
         <button class="cancel-edit bg-gray-600 text-white px-4 py-2 rounded">Cancel</button>
       `;
@@ -141,6 +150,7 @@ function attachPostEventListeners() {
       editForm.querySelector(".save-edit").addEventListener("click", async () => {
         const newTitle = editForm.querySelector(".edit-title").value.trim();
         const newContent = editForm.querySelector(".edit-content").value.trim();
+        const newImage = editForm.querySelector(".edit-image").value.trim();
 
         if (!newTitle || !newContent) {
           alert("Title and content cannot be empty.");
@@ -148,7 +158,7 @@ function attachPostEventListeners() {
         }
 
         try {
-          await updatePost(postId, { title: newTitle, body: newContent });
+          await updatePost(postId, { title: newTitle, body: newContent, media: newImage || null });
           await loadPosts();
         } catch (error) {
           console.error("Error updating post:", error);
@@ -165,7 +175,6 @@ function attachPostEventListeners() {
   document.querySelectorAll(".delete-btn").forEach((button) => {
     button.addEventListener("click", async (e) => {
       const postId = e.target.getAttribute("data-id");
-
       if (confirm("Are you sure you want to delete this post?")) {
         try {
           await deletePost(postId);
@@ -190,9 +199,10 @@ async function openModal(postId) {
     }
 
     const contentText = post.body || post.content || "No content available";
+    const imageHTML = post.media ? `<img src="${post.media}" alt="Post image" class="w-full h-auto mb-2 rounded">` : "";
 
     document.getElementById("modal-title").textContent = post.title;
-    document.getElementById("modal-content").textContent = contentText;
+    document.getElementById("modal-content").innerHTML = `${imageHTML}<p>${contentText}</p>`;
     document.getElementById("modal-date").textContent = `Created: ${new Date(post.created).toLocaleString()}`;
 
     document.getElementById("post-modal").classList.remove("hidden");
@@ -204,7 +214,6 @@ async function openModal(postId) {
   }
 }
 
-
 function closeModal() {
   console.log("🛑 Closing modal...");
   const modal = document.getElementById("post-modal");
@@ -212,49 +221,46 @@ function closeModal() {
 }
 
 async function applyFilters() {
-    console.log("🔍 Applying filters...");
-    
-    const filterOption = document.getElementById("filter-options")?.value;
-    const searchQuery = document.getElementById("search-posts")?.value.toLowerCase();
-    const user = JSON.parse(localStorage.getItem("user"));
-    const username = user?.email.split("@")[0].substring(0, 24);
+  console.log("🔍 Applying filters...");
   
-    try {
-      let posts = await readPosts();
-      console.log("📌 Original posts:", posts);
+  const filterOption = document.getElementById("filter-options")?.value;
+  const searchQuery = document.getElementById("search-posts")?.value.toLowerCase();
+  const user = JSON.parse(localStorage.getItem("user"));
+  const username = user?.email.split("@")[0].substring(0, 24);
   
-      if (filterOption === "my-posts") {
-        posts = posts.filter(post => post.tags.includes(username));
-      }
+  try {
+    let posts = await readPosts();
+    console.log("📌 Original posts:", posts);
   
-      if (filterOption === "recent") {
-        posts.sort((a, b) => new Date(b.created) - new Date(a.created));
-      }
-  
-      if (filterOption === "most-liked") {
-        posts.sort((a, b) => (b._count?.reactions || 0) - (a._count?.reactions || 0));
-      }
-
-      if (searchQuery) {
-        posts = posts.filter(post =>
-          post.title.toLowerCase().includes(searchQuery) ||
-          (post.content && post.content.toLowerCase().includes(searchQuery))
-        );
-      }
-  
-      console.log("📌 Filtered posts:", posts);
-      
-      renderPosts(posts);
-    } catch (error) {
-      console.error("❌ Error filtering posts:", error);
+    if (filterOption === "my-posts") {
+      posts = posts.filter(post => post.tags.includes(username));
     }
+  
+    if (filterOption === "recent") {
+      posts.sort((a, b) => new Date(b.created) - new Date(a.created));
+    }
+  
+    if (filterOption === "most-liked") {
+      posts.sort((a, b) => (b._count?.reactions || 0) - (a._count?.reactions || 0));
+    }
+  
+    if (searchQuery) {
+      posts = posts.filter(post =>
+        post.title.toLowerCase().includes(searchQuery) ||
+        (post.content && post.content.toLowerCase().includes(searchQuery))
+      );
+    }
+  
+    console.log("📌 Filtered posts:", posts);
+    renderPosts(posts);
+  } catch (error) {
+    console.error("❌ Error filtering posts:", error);
   }
-  
-  function handleLogout() {
-    console.log("🚪 Logging out...");
-    localStorage.removeItem("user");
-    localStorage.removeItem("apiKey");
-    window.location.href = "/index.html";
-  }
-  
-  
+}
+
+function handleLogout() {
+  console.log("🚪 Logging out...");
+  localStorage.removeItem("user");
+  localStorage.removeItem("apiKey");
+  window.location.href = "/index.html";
+}
