@@ -4,14 +4,12 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Noroff FED2 JS2 CA</title>
-  <script type="module" src="/src/app.js"></script>
-  <script type="module" src="/src/js/api/auth/login.js"></script>
+  <script type="module" src="./src/app.js"></script>
+  <script type="module" src="./src/js/api/auth/login.js"></script>
   <script src="https://cdn.tailwindcss.com"></script>
-  <script type="module" src="/assets/login-QOujRU_E.js"></script>
 </head>
-
 <body class="bg-gray-100 text-gray-900 flex flex-col items-center justify-center h-screen">
-  <img src="/images/noroff-logo.png" alt="Noroff Logo" />
+  <img src="./images/noroff-logo.png" alt="Noroff Logo" />
 
   <section id="login-section" class="bg-white p-6 rounded-lg shadow-md mt-6 w-80 text-center">
     <h2 class="text-xl font-semibold mb-2">Login</h2>
@@ -20,7 +18,7 @@
       <input type="password" id="password" placeholder="Password" class="w-full p-2 border rounded">
       <div class="flex justify-between gap-4">
         <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded w-full">Login</button>
-        <a href="/auth/register.html" class="bg-green-600 text-white px-4 py-2 rounded w-full text-center">Register</a>
+        <a href="./auth/register.html" class="bg-green-600 text-white px-4 py-2 rounded w-full text-center">Register</a>
       </div>  
     </form>
     <p class="text-red-500 mt-2 hidden text-center" id="login-error">Invalid login</p>

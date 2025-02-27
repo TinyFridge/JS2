@@ -18,11 +18,9 @@ async function handleCreatePost(event) {
       const postData = { title, content };
       await createPost(postData);
       
-      // Clear input fields after successful post creation
       document.getElementById("post-title").value = "";
       document.getElementById("post-content").value = "";
   
-      // Reload posts to show the new one
       await loadPosts();
     } catch (error) {
       console.error("Error creating post:", error);
@@ -31,7 +29,7 @@ async function handleCreatePost(event) {
   }
   
 
-document.addEventListener("DOMContentLoaded", async () => {
+  document.addEventListener("DOMContentLoaded", async () => {
     console.log("🚀 Feed Page Loaded");
   
     await loadPosts();
@@ -81,6 +79,14 @@ function renderPosts(posts) {
     const postEl = document.createElement("div");
     postEl.classList.add("bg-white", "p-4", "rounded-xl", "shadow-lg");
 
+    const contentText = (post.body !== null && post.body !== undefined && post.body !== "")
+      ? post.body
+      : ((post.content !== null && post.content !== undefined && post.content !== "") 
+          ? post.content 
+          : "No content available");
+
+    postEl.setAttribute("data-original-content", (post.body || post.content || ""));
+
     const isUserPost = post.tags.includes(username);
     const editDeleteButtons = isUserPost
       ? `<button class="edit-btn bg-blue-500 text-white px-2 py-1 rounded" data-id="${post.id}">Edit</button>
@@ -89,7 +95,7 @@ function renderPosts(posts) {
 
     postEl.innerHTML = `
       <h2 class="text-xl font-bold">${post.title}</h2>
-      <p>${post.content}</p>
+      <p>${contentText}</p>
       <small class="text-gray-500">Created: ${new Date(post.created).toLocaleString()}</small>
       <div class="mt-2 flex gap-2">
         <button class="view-btn bg-gray-500 text-white px-2 py-1 rounded" data-id="${post.id}">View</button>
@@ -118,12 +124,14 @@ function attachPostEventListeners() {
 
       document.querySelectorAll(".edit-panel").forEach(panel => panel.remove());
 
+      const originalContent = postEl.getAttribute("data-original-content");
+
       const editForm = document.createElement("div");
       editForm.classList.add("edit-panel", "mt-4", "p-4", "bg-gray-50", "rounded");
 
       editForm.innerHTML = `
         <input type="text" class="edit-title w-full p-2 border rounded mb-2" value="${postEl.querySelector("h2").textContent}">
-        <textarea class="edit-content w-full p-2 border rounded mb-2">${postEl.querySelector("p").textContent}</textarea>
+        <textarea class="edit-content w-full p-2 border rounded mb-2">${originalContent}</textarea>
         <button class="save-edit bg-green-600 text-white px-4 py-2 rounded" data-id="${postId}">Save</button>
         <button class="cancel-edit bg-gray-600 text-white px-4 py-2 rounded">Cancel</button>
       `;
@@ -140,7 +148,7 @@ function attachPostEventListeners() {
         }
 
         try {
-          await updatePost(postId, { title: newTitle, content: newContent });
+          await updatePost(postId, { title: newTitle, body: newContent });
           await loadPosts();
         } catch (error) {
           console.error("Error updating post:", error);
@@ -181,8 +189,10 @@ async function openModal(postId) {
       return;
     }
 
+    const contentText = post.body || post.content || "No content available";
+
     document.getElementById("modal-title").textContent = post.title;
-    document.getElementById("modal-content").textContent = post.content;
+    document.getElementById("modal-content").textContent = contentText;
     document.getElementById("modal-date").textContent = `Created: ${new Date(post.created).toLocaleString()}`;
 
     document.getElementById("post-modal").classList.remove("hidden");
@@ -193,6 +203,7 @@ async function openModal(postId) {
     alert("Failed to load post details.");
   }
 }
+
 
 function closeModal() {
   console.log("🛑 Closing modal...");
