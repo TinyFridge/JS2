@@ -8,7 +8,18 @@
     <script src="https://cdn.tailwindcss.com"></script>
   </head>
   <body class="bg-gray-100 text-gray-900 flex flex-col items-center justify-center h-screen">
-    <img src="/public/images/noroff-logo.png" alt="Noroff Logo" class="h-16 mb-6">
+    <svg xmlns="http://www.w3.org/2000/svg" width="400" height="80" viewBox="0 0 400 80">
+      <defs>
+        <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" style="stop-color:#2563eb; stop-opacity:1" />
+          <stop offset="100%" style="stop-color:#60a5fa; stop-opacity:1" />
+        </linearGradient>
+      </defs>
+      <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle"
+            font-family="Arial, sans-serif" font-size="78" fill="url(#logoGradient)" font-weight="bold">
+        Rebuttal
+      </text>
+    </svg>
     <section id="register-section" class="bg-white p-6 rounded-lg shadow-md w-80 text-center">
       <h2 class="text-xl font-semibold mb-4">Register</h2>
       <form name="register" class="space-y-4">
