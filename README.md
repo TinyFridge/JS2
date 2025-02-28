@@ -5,6 +5,7 @@ Site is built with
 HTML
 CSS
 JS
+and TailwindCSS
 
 Vite came pre-installed in the template, trying to learn that too.
 
