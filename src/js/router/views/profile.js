@@ -42,6 +42,7 @@ async function loadMyPosts(userEmail) {
     if (!Array.isArray(posts)) {
       throw new Error("Invalid API response format");
     }
+
     const username = userEmail.split("@")[0];
     console.log("Filtering posts for username:", username);
 
@@ -60,7 +61,7 @@ async function loadMyPosts(userEmail) {
       const contentText = (post.body && post.body.trim() !== "")
         ? post.body
         : ((post.content && post.content.trim() !== "") ? post.content : "No content available");
-      
+
       const imageHTML = (post.media && post.media.url)
         ? `<img src="${post.media.url}" alt="${post.media.alt || "Post image"}" class="w-full h-auto mb-2 rounded">`
         : "";

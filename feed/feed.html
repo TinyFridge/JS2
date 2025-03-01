@@ -8,7 +8,6 @@
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-100 text-gray-900">
-
   <header class="bg-blue-600 text-white p-4 flex justify-between items-center">
     <h1 class="text-2xl font-bold">Post Feed</h1>
     <div class="flex items-center space-x-4">
@@ -17,7 +16,32 @@
       <button id="logout-btn" class="text-white hover:underline">Logout</button>
     </div>
   </header>
-
+  <nav class="bg-blue-600 p-4">
+    <div class="container mx-auto flex items-center justify-between">
+      <div class="text-white font-bold text-xl">Rebuttal</div>
+      <!-- Hamburger menu: visible only on small screens -->
+      <div class="md:hidden">
+        <button id="menu-toggle" class="text-white focus:outline-none">
+          <svg class="h-6 w-6 fill-current" viewBox="0 0 24 24">
+            <path d="M4 6h16M4 12h16M4 18h16"/>
+          </svg>
+        </button>
+      </div>
+      <!-- Full menu: hidden on small screens -->
+      <div id="menu" class="hidden md:flex space-x-4">
+        <a href="/feed.html" class="text-white">Feed</a>
+        <a href="/profile/profile.html" class="text-white">Profile</a>
+        <button id="logout-btn" class="text-white">Logout</button>
+      </div>
+    </div>
+  </nav>
+  <script>
+    const toggle = document.getElementById('menu-toggle');
+    const menu = document.getElementById('menu');
+    toggle.addEventListener('click', () => {
+      menu.classList.toggle('hidden');
+    });
+  </script>  
   <section class="max-w-4xl mx-auto p-6">
     <div class="flex justify-between mb-4">
       <input type="text" id="search-posts" placeholder="Search posts..." class="w-1/2 p-2 border rounded">

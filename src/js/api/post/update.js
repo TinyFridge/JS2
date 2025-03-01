@@ -2,9 +2,12 @@ import { API_SOCIAL_POSTS } from "../constants.js";
 
 export async function updatePost(postId, postData) {
   try {
-    const accessToken = JSON.parse(localStorage.getItem("user"))?.accessToken;
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (!user || !user.accessToken) {
+      throw new Error("Missing authentication credentials");
+    }
+    const accessToken = user.accessToken;
     const apiKey = localStorage.getItem("apiKey");
-
     if (!accessToken || !apiKey) {
       throw new Error("Missing authentication credentials");
     }

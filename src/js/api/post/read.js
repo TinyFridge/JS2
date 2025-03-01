@@ -2,7 +2,8 @@ import { API_SOCIAL_POSTS } from "../constants.js";
 
 export async function readPosts() {
   try {
-    const accessToken = JSON.parse(localStorage.getItem("user"))?.accessToken;
+    const user = JSON.parse(localStorage.getItem("user"));
+    const accessToken = user?.accessToken;
     const apiKey = localStorage.getItem("apiKey");
 
     if (!accessToken || !apiKey) {

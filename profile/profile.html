@@ -17,7 +17,32 @@
       <button id="logout-btn" class="text-white hover:underline">Logout</button>
     </div>
   </header>
-
+  <nav class="bg-blue-600 p-4">
+    <div class="container mx-auto flex items-center justify-between">
+      <div class="text-white font-bold text-xl">Rebuttal</div>
+      <!-- Hamburger menu: visible only on small screens -->
+      <div class="md:hidden">
+        <button id="menu-toggle" class="text-white focus:outline-none">
+          <svg class="h-6 w-6 fill-current" viewBox="0 0 24 24">
+            <path d="M4 6h16M4 12h16M4 18h16"/>
+          </svg>
+        </button>
+      </div>
+      <!-- Full menu: hidden on small screens -->
+      <div id="menu" class="hidden md:flex space-x-4">
+        <a href="/feed.html" class="text-white">Feed</a>
+        <a href="/profile/profile.html" class="text-white">Profile</a>
+        <button id="logout-btn" class="text-white">Logout</button>
+      </div>
+    </div>
+  </nav>
+  <script>
+    const toggle = document.getElementById('menu-toggle');
+    const menu = document.getElementById('menu');
+    toggle.addEventListener('click', () => {
+      menu.classList.toggle('hidden');
+    });
+  </script>  
   <main class="max-w-4xl mx-auto p-6">
     <section id="profile-info" class="bg-white p-6 rounded-lg shadow-md mb-6">
       <h2 class="text-xl font-semibold mb-4">Profile Details</h2>

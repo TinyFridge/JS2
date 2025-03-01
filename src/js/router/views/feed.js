@@ -91,11 +91,12 @@ function renderPosts(posts) {
       ? `<img src="${post.media.url}" alt="${post.media.alt || "Post image"}" class="w-full h-auto mb-2 rounded">`
       : "";
 
-    const isUserPost = post.tags.includes(username);
-    const editDeleteButtons = isUserPost
-      ? `<button class="edit-btn bg-blue-500 text-white px-2 py-1 rounded" data-id="${post.id}">Edit</button>
-         <button class="delete-btn bg-red-500 text-white px-2 py-1 rounded" data-id="${post.id}">Delete</button>`
-      : "";
+      const isUserPost = post.tags.includes(username);
+      const editDeleteButtons = isUserPost
+        ? `<button class="edit-btn bg-blue-500 text-white px-2 py-1 rounded" data-id="${post.id}">Edit</button>
+           <button class="delete-btn bg-red-500 text-white px-2 py-1 rounded" data-id="${post.id}">Delete</button>`
+        : "";
+      
 
     postEl.innerHTML = `
       <h2 class="text-xl font-bold">${post.title}</h2>
