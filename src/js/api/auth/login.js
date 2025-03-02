@@ -1,9 +1,11 @@
-import { API_AUTH_LOGIN, API_KEY } from "../constants.js";
+import { API_AUTH_LOGIN, API_AUTH_KEY } from "../constants.js";
 
 document.addEventListener("DOMContentLoaded", () => {
   console.log("🔥 login.js loaded successfully!");
 
   const loginForm = document.getElementById("login-form");
+  const loginError = document.getElementById("login-error");
+
   if (!loginForm) {
     console.error("❌ Login form not found in the DOM.");
     return;
@@ -16,57 +18,82 @@ document.addEventListener("DOMContentLoaded", () => {
     const email = document.getElementById("email").value.trim();
     const password = document.getElementById("password").value.trim();
 
-    if (!(email.endsWith("@noroff.no") || email.endsWith("@stud.noroff.no"))) {
-      document.getElementById("login-error").textContent = "Email must be a valid Noroff email";
-      document.getElementById("login-error").classList.remove("hidden");
+    if (!email || !password) {
+      console.warn("⚠ Missing email or password.");
       return;
     }
 
-    console.log("📤 Sending API request to:", API_AUTH_LOGIN);
-    console.log("👤 Login Data:", { email, password });
-
     try {
+      console.log("Sending login request to:", API_AUTH_LOGIN);
       const response = await fetch(API_AUTH_LOGIN, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
       });
 
-      console.log("🔍 API Response Status:", response.status);
+      console.log("Login response status:", response.status);
 
       if (!response.ok) {
         const errorData = await response.json();
-        console.error("❌ API Error Response:", errorData);
-        throw new Error(errorData.errors ? errorData.errors[0].message : "Login failed");
+        throw new Error(
+          errorData.errors ? errorData.errors[0].message : "Login failed"
+        );
       }
 
-      const data = await response.json();
-      console.log("📩 API Response Data:", data);
+      const loginData = await response.json();
+      console.log("Login successful, data:", loginData);
 
-      const accessToken = data.data?.accessToken;
-      console.log("🔑 Access Token Received:", accessToken);
-
+      const accessToken = loginData.data?.accessToken;
       if (!accessToken) {
         throw new Error("Access token not returned.");
       }
 
-      localStorage.setItem("user", JSON.stringify({
-        email: data.data.email,
-        name: data.data.name,
+      // Construct the user object from the API response.
+      const user = {
+        email: loginData.data.email,
+        name: loginData.data.name,
         accessToken,
-        avatar: data.data.avatar?.url || null,
-        banner: data.data.banner?.url || null,
-      }));
+        avatar: loginData.data.avatar ? loginData.data.avatar.url : null,
+        banner: loginData.data.banner ? loginData.data.banner.url : null,
+      };
 
-      localStorage.setItem("apiKey", API_KEY);
-      console.log("✅ User stored in localStorage:", localStorage.getItem("user"));
-      console.log("✅ API Key stored in localStorage:", localStorage.getItem("apiKey"));
+      console.log("Storing user:", user);
+      localStorage.setItem("user", JSON.stringify(user));
 
+      // Create an API key for the session.
+      const keyResponse = await fetch(API_AUTH_KEY, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
+        },
+        body: JSON.stringify({ name: "My API Key" }),
+      });
+
+      if (!keyResponse.ok) {
+        const keyErrorData = await keyResponse.json();
+        throw new Error(
+          keyErrorData.errors
+            ? keyErrorData.errors[0].message
+            : "Failed to create API key"
+        );
+      }
+
+      const keyData = await keyResponse.json();
+      const apiKey = keyData.data?.key;
+      if (!apiKey) {
+        throw new Error("API key not returned.");
+      }
+
+      console.log("Storing API key:", apiKey);
+      localStorage.setItem("apiKey", apiKey);
+
+      // Redirect to the profile page.
       window.location.href = "/profile/profile.html";
     } catch (error) {
       console.error("❌ Login error:", error);
-      document.getElementById("login-error").textContent = "Login failed: " + error.message;
-      document.getElementById("login-error").classList.remove("hidden");
+      loginError.textContent = `Login failed: ${error.message}`;
+      loginError.classList.remove("hidden");
     }
   });
 });

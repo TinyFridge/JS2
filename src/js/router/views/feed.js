@@ -1,3 +1,5 @@
+console.log("feed.js loaded");
+
 import { readPosts } from "@api/read.js";
 import { createPost } from "@api/create.js";
 import { deletePost } from "@api/delete.js";
@@ -5,7 +7,7 @@ import { updatePost } from "@api/update.js";
 
 /**
  * Handles the creation of a new post.
- * @param {Event} event - The form submit event.
+ * @param {Event} event - The form submission event.
  */
 async function handleCreatePost(event) {
   event.preventDefault();
@@ -25,7 +27,7 @@ async function handleCreatePost(event) {
       title, 
       body: content,
       media: imageUrl ? { url: imageUrl, alt: "" } : null,
-      createdBy: user.email  // Ensure posts are tagged with the creator's email
+      createdBy: user.email  // Associate the post with the logged-in user
     };
 
     await createPost(postData);
@@ -42,9 +44,10 @@ async function handleCreatePost(event) {
 }
 
 /**
- * Loads posts from the API and renders them in a grid layout.
+ * Loads posts from the API and renders them.
  */
 async function loadPosts() {
+  console.log("loadPosts() called");
   const postContainer = document.getElementById("post-feed");
   postContainer.innerHTML = "<p>Loading posts...</p>";
 
@@ -58,8 +61,9 @@ async function loadPosts() {
   }
 }
 
+
 /**
- * Renders an array of posts in a grid.
+ * Renders posts in a grid layout.
  * @param {Array<Object>} posts - The array of post objects.
  */
 function renderPosts(posts) {
@@ -92,7 +96,7 @@ function renderPosts(posts) {
       ? `<img src="${post.media.url}" alt="${post.media.alt || "Post image"}" class="w-full h-auto mb-2 rounded">`
       : "";
 
-    // Determine if this post belongs to the logged-in user.
+    // Check if the post belongs to the logged-in user using createdBy property.
     const isUserPost = post.createdBy === currentUserEmail;
     const editDeleteButtons = isUserPost
       ? `<button class="edit-btn bg-blue-500 text-white px-2 py-1 rounded" data-id="${post.id}">Edit</button>
@@ -110,7 +114,6 @@ function renderPosts(posts) {
       </div>
     `;
 
-    // Save original data for editing purposes.
     postEl.setAttribute("data-original-content", post.body || post.content || "");
     postEl.setAttribute("data-original-media", post.media ? JSON.stringify(post.media) : "");
 
@@ -121,7 +124,7 @@ function renderPosts(posts) {
 }
 
 /**
- * Attaches event listeners for view, edit, and delete actions.
+ * Attaches event listeners to view, edit, and delete buttons.
  */
 function attachPostEventListeners() {
   document.querySelectorAll(".view-btn").forEach((button) => {
@@ -136,7 +139,7 @@ function attachPostEventListeners() {
       const postEl = e.target.closest("div.bg-white");
       const postId = e.target.getAttribute("data-id");
 
-      // Remove existing edit panels.
+      // Remove any existing edit panels.
       document.querySelectorAll(".edit-panel").forEach(panel => panel.remove());
 
       const originalTitle = postEl.querySelector("h2").textContent;
@@ -207,6 +210,7 @@ function attachPostEventListeners() {
 
 /**
  * Opens a modal displaying a post's details.
+ *
  * @param {number|string} postId - The ID of the post to view.
  */
 async function openModal(postId) {
@@ -238,7 +242,7 @@ async function openModal(postId) {
 }
 
 /**
- * Closes the post modal.
+ * Closes the post details modal.
  */
 function closeModal() {
   console.log("🛑 Closing modal...");
@@ -247,7 +251,7 @@ function closeModal() {
 }
 
 /**
- * Applies filters to posts based on the selected filter and search query.
+ * Applies filters to posts based on filter option and search query.
  */
 async function applyFilters() {
   console.log("🔍 Applying filters...");
