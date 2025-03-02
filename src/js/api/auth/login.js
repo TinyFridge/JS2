@@ -1,3 +1,5 @@
+console.log("Login.js loaded");
+
 import { API_AUTH_LOGIN, API_AUTH_KEY } from "../constants.js";
 
 document.addEventListener("DOMContentLoaded", () => {
