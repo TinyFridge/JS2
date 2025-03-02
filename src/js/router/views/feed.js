@@ -1,13 +1,36 @@
-console.log("feed.js loaded");
-
+import { authGuard } from "../../utilities/authGuard";
 import { readPosts } from "@api/read.js";
 import { createPost } from "@api/create.js";
 import { deletePost } from "@api/delete.js";
 import { updatePost } from "@api/update.js";
 
+// Ensure only logged‑in users can access feed.js.
+authGuard();
+console.log("User in feed.js:", localStorage.getItem("user"));
+
+document.addEventListener("DOMContentLoaded", async () => {
+  console.log("🚀 Feed Page Loaded");
+  await loadPosts();
+
+  const createForm = document.getElementById("create-post-form");
+  if (createForm) createForm.addEventListener("submit", handleCreatePost);
+
+  const filterOptions = document.getElementById("filter-options");
+  if (filterOptions) filterOptions.addEventListener("change", applyFilters);
+
+  const searchInput = document.getElementById("search-posts");
+  if (searchInput) searchInput.addEventListener("input", applyFilters);
+
+  const closeModalBtn = document.getElementById("close-modal");
+  if (closeModalBtn) closeModalBtn.addEventListener("click", closeModal);
+
+  const logoutBtn = document.getElementById("logout-btn");
+  if (logoutBtn) logoutBtn.addEventListener("click", handleLogout);
+});
+
 /**
  * Handles the creation of a new post.
- * @param {Event} event - The form submission event.
+ * @param {Event} event - The form submit event.
  */
 async function handleCreatePost(event) {
   event.preventDefault();
@@ -23,15 +46,19 @@ async function handleCreatePost(event) {
 
   try {
     const user = JSON.parse(localStorage.getItem("user"));
+    // Use the email prefix as the tag.
+    const tag = user.email.split("@")[0];
     const postData = { 
       title, 
       body: content,
       media: imageUrl ? { url: imageUrl, alt: "" } : null,
-      createdBy: user.email  // Associate the post with the logged-in user
+      tags: [tag]  // New posts are tagged with the user's email prefix.
     };
 
+    console.log("Creating post with data:", postData);
     await createPost(postData);
 
+    // Clear form fields.
     document.getElementById("post-title").value = "";
     document.getElementById("post-content").value = "";
     document.getElementById("post-image").value = "";
@@ -47,47 +74,45 @@ async function handleCreatePost(event) {
  * Loads posts from the API and renders them.
  */
 async function loadPosts() {
-  console.log("loadPosts() called");
   const postContainer = document.getElementById("post-feed");
   postContainer.innerHTML = "<p>Loading posts...</p>";
 
   try {
+    console.log("Calling readPosts() in feed.js");
     const posts = await readPosts();
     console.log("📌 All posts from API:", posts);
-    renderPosts(posts);
+
+    if (!Array.isArray(posts)) {
+      throw new Error("Invalid API response format");
+    }
+
+    if (posts.length === 0) {
+      postContainer.innerHTML = "<p class='text-gray-500'>No posts found. Try creating one.</p>";
+    } else {
+      renderPosts(posts);
+    }
   } catch (error) {
     console.error("❌ Error loading posts:", error);
     postContainer.innerHTML = `<p class='text-red-500'>Error loading posts: ${error.message}</p>`;
   }
 }
 
-
 /**
- * Renders posts in a grid layout.
+ * Renders an array of posts in a grid layout.
  * @param {Array<Object>} posts - The array of post objects.
  */
 function renderPosts(posts) {
   const postContainer = document.getElementById("post-feed");
   postContainer.innerHTML = "";
 
-  if (!Array.isArray(posts)) {
-    console.error("❌ API returned invalid data:", posts);
-    postContainer.innerHTML = "<p class='text-red-500'>Error: Invalid post data received.</p>";
-    return;
-  }
-
-  if (posts.length === 0) {
-    postContainer.innerHTML = "<p class='text-gray-500'>No posts found.</p>";
-    return;
-  }
-
   const user = JSON.parse(localStorage.getItem("user"));
-  const currentUserEmail = user?.email;
+  const currentTag = user.email.split("@")[0];
 
   posts.forEach(post => {
     const postEl = document.createElement("div");
     postEl.classList.add("bg-white", "p-4", "rounded-xl", "shadow-lg");
 
+    // Use body if available, otherwise fallback to content.
     const contentText = (post.body && post.body.trim() !== "")
       ? post.body
       : ((post.content && post.content.trim() !== "") ? post.content : "No content available");
@@ -96,8 +121,8 @@ function renderPosts(posts) {
       ? `<img src="${post.media.url}" alt="${post.media.alt || "Post image"}" class="w-full h-auto mb-2 rounded">`
       : "";
 
-    // Check if the post belongs to the logged-in user using createdBy property.
-    const isUserPost = post.createdBy === currentUserEmail;
+    // Determine if this post belongs to the logged-in user by checking if tags include the current user's tag.
+    const isUserPost = post.tags && Array.isArray(post.tags) && post.tags.includes(currentTag);
     const editDeleteButtons = isUserPost
       ? `<button class="edit-btn bg-blue-500 text-white px-2 py-1 rounded" data-id="${post.id}">Edit</button>
          <button class="delete-btn bg-red-500 text-white px-2 py-1 rounded" data-id="${post.id}">Delete</button>`
@@ -114,6 +139,7 @@ function renderPosts(posts) {
       </div>
     `;
 
+    // Save original data for editing purposes.
     postEl.setAttribute("data-original-content", post.body || post.content || "");
     postEl.setAttribute("data-original-media", post.media ? JSON.stringify(post.media) : "");
 
@@ -124,17 +150,19 @@ function renderPosts(posts) {
 }
 
 /**
- * Attaches event listeners to view, edit, and delete buttons.
+ * Attaches event listeners for view, edit, and delete actions.
  */
 function attachPostEventListeners() {
-  document.querySelectorAll(".view-btn").forEach((button) => {
+  // View button event
+  document.querySelectorAll(".view-btn").forEach(button => {
     button.addEventListener("click", (e) => {
       const postId = e.target.getAttribute("data-id");
       openModal(postId);
     });
   });
 
-  document.querySelectorAll(".edit-btn").forEach((button) => {
+  // Edit button event
+  document.querySelectorAll(".edit-btn").forEach(button => {
     button.addEventListener("click", (e) => {
       const postEl = e.target.closest("div.bg-white");
       const postId = e.target.getAttribute("data-id");
@@ -160,7 +188,6 @@ function attachPostEventListeners() {
         <button class="save-edit bg-green-600 text-white px-4 py-2 rounded" data-id="${postId}">Save</button>
         <button class="cancel-edit bg-gray-600 text-white px-4 py-2 rounded">Cancel</button>
       `;
-
       postEl.appendChild(editForm);
 
       editForm.querySelector(".save-edit").addEventListener("click", async () => {
@@ -192,7 +219,8 @@ function attachPostEventListeners() {
     });
   });
 
-  document.querySelectorAll(".delete-btn").forEach((button) => {
+  // Delete button event
+  document.querySelectorAll(".delete-btn").forEach(button => {
     button.addEventListener("click", async (e) => {
       const postId = e.target.getAttribute("data-id");
       if (confirm("Are you sure you want to delete this post?")) {
@@ -210,7 +238,6 @@ function attachPostEventListeners() {
 
 /**
  * Opens a modal displaying a post's details.
- *
  * @param {number|string} postId - The ID of the post to view.
  */
 async function openModal(postId) {
@@ -242,7 +269,7 @@ async function openModal(postId) {
 }
 
 /**
- * Closes the post details modal.
+ * Closes the post modal.
  */
 function closeModal() {
   console.log("🛑 Closing modal...");
@@ -251,7 +278,7 @@ function closeModal() {
 }
 
 /**
- * Applies filters to posts based on filter option and search query.
+ * Applies filters to posts based on the selected filter and search query.
  */
 async function applyFilters() {
   console.log("🔍 Applying filters...");
@@ -259,15 +286,15 @@ async function applyFilters() {
   const filterOption = document.getElementById("filter-options")?.value;
   const searchQuery = document.getElementById("search-posts")?.value.toLowerCase();
   const user = JSON.parse(localStorage.getItem("user"));
-  const username = user?.email.split("@")[0].substring(0, 24);
+  const currentTag = user.email.split("@")[0];
   
   try {
     let posts = await readPosts();
     console.log("📌 Original posts:", posts);
   
     if (filterOption === "my-posts") {
-      // Filter posts by createdBy property
-      posts = posts.filter(post => post.createdBy === user.email);
+      // Filter posts by checking if tags include the current user's email prefix.
+      posts = posts.filter(post => post.tags && post.tags.includes(currentTag));
     }
   
     if (filterOption === "recent") {
@@ -281,6 +308,7 @@ async function applyFilters() {
     if (searchQuery) {
       posts = posts.filter(post =>
         post.title.toLowerCase().includes(searchQuery) ||
+        (post.body && post.body.toLowerCase().includes(searchQuery)) ||
         (post.content && post.content.toLowerCase().includes(searchQuery))
       );
     }

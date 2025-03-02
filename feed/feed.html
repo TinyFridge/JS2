@@ -32,6 +32,16 @@
     </nav>
 
     <main class="container mx-auto p-4">
+      <section id="search-filter-section" class="mb-6">
+        <input type="text" id="search-posts" placeholder="Search posts..." class="w-full p-2 border rounded mb-2">
+        <select id="filter-options" class="w-full p-2 border rounded">
+          <option value="all">All Posts</option>
+          <option value="my-posts">My Posts</option>
+          <option value="recent">Most Recent</option>
+          <option value="most-liked">Most Liked</option>
+        </select>
+      </section>
+
       <section id="create-post-section" class="mb-6">
         <form id="create-post-form" class="bg-white p-4 rounded shadow">
           <h2 class="text-xl mb-4">Create New Post</h2>
@@ -41,7 +51,9 @@
           <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded">Add Post</button>
         </form>
       </section>
+
       <section id="post-feed" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6"></section>
+      
       <div id="post-modal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
         <div class="bg-white p-6 rounded-lg shadow-lg w-96">
           <h2 id="modal-title" class="text-xl font-bold"></h2>
@@ -53,11 +65,14 @@
     </main>
 
     <script>
+      // Hamburger menu toggle
       const menuToggle = document.getElementById("menu-toggle");
       const mobileMenu = document.getElementById("mobile-menu");
       menuToggle.addEventListener("click", () => {
         mobileMenu.classList.toggle("hidden");
       });
+
+      // Logout handlers
       const logoutHandler = () => {
         localStorage.removeItem("user");
         localStorage.removeItem("apiKey");
