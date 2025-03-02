@@ -11,9 +11,8 @@ export async function createPost(postData) {
     if (!accessToken || !apiKey) {
       throw new Error("Missing authentication credentials.");
     }
-
-    const username = user.email.split("@")[0];
-    postData.tags = [username];
+    
+    postData.createdBy = user.email;
 
     console.log("📤 Sending post request with data:", postData);
 

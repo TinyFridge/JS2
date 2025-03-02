@@ -16,10 +16,12 @@ async function handleCreatePost(event) {
   }
 
   try {
+    const user = JSON.parse(localStorage.getItem("user"));
     const postData = { 
       title, 
       body: content,
-      media: imageUrl ? { url: imageUrl, alt: "" } : null
+      media: imageUrl ? { url: imageUrl, alt: "" } : null,
+      createdBy: user.email
     };
 
     await createPost(postData);
@@ -37,7 +39,6 @@ async function handleCreatePost(event) {
 
 document.addEventListener("DOMContentLoaded", async () => {
   console.log("🚀 Feed Page Loaded");
-
   await loadPosts();
 
   document.getElementById("create-post-form")?.addEventListener("submit", handleCreatePost);
@@ -77,7 +78,7 @@ function renderPosts(posts) {
   }
 
   const user = JSON.parse(localStorage.getItem("user"));
-  const username = user?.email.split("@")[0].substring(0, 24);
+  const currentUserEmail = user?.email;
 
   posts.forEach(post => {
     const postEl = document.createElement("div");
@@ -91,12 +92,11 @@ function renderPosts(posts) {
       ? `<img src="${post.media.url}" alt="${post.media.alt || "Post image"}" class="w-full h-auto mb-2 rounded">`
       : "";
 
-      const isUserPost = post.tags.includes(username);
-      const editDeleteButtons = isUserPost
-        ? `<button class="edit-btn bg-blue-500 text-white px-2 py-1 rounded" data-id="${post.id}">Edit</button>
-           <button class="delete-btn bg-red-500 text-white px-2 py-1 rounded" data-id="${post.id}">Delete</button>`
-        : "";
-      
+    const isUserPost = post.createdBy === currentUserEmail;
+    const editDeleteButtons = isUserPost
+      ? `<button class="edit-btn bg-blue-500 text-white px-2 py-1 rounded" data-id="${post.id}">Edit</button>
+         <button class="delete-btn bg-red-500 text-white px-2 py-1 rounded" data-id="${post.id}">Delete</button>`
+      : "";
 
     postEl.innerHTML = `
       <h2 class="text-xl font-bold">${post.title}</h2>
@@ -135,7 +135,6 @@ function attachPostEventListeners() {
 
       const originalTitle = postEl.querySelector("h2").textContent;
       const originalContent = postEl.getAttribute("data-original-content");
-
       let originalMedia = "";
       try {
         originalMedia = JSON.parse(postEl.getAttribute("data-original-media")).url || "";
@@ -247,7 +246,7 @@ async function applyFilters() {
     console.log("📌 Original posts:", posts);
   
     if (filterOption === "my-posts") {
-      posts = posts.filter(post => post.tags.includes(username));
+      posts = posts.filter(post => post.createdBy === user.email);
     }
   
     if (filterOption === "recent") {

@@ -1,82 +1,72 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Post Feed</title>
-  <script type="module" src="/src/js/router/views/feed.js"></script>
-  <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-gray-100 text-gray-900">
-  <header class="bg-blue-600 text-white p-4 flex justify-between items-center">
-    <h1 class="text-2xl font-bold">Post Feed</h1>
-    <div class="flex items-center space-x-4">
-      <a href="/feed.html" class="text-white hover:underline">Feed</a>
-      <a href="/profile/profile.html" class="text-white hover:underline">Profile</a>
-      <button id="logout-btn" class="text-white hover:underline">Logout</button>
-    </div>
-  </header>
-  <nav class="bg-blue-600 p-4">
-    <div class="container mx-auto flex items-center justify-between">
-      <div class="text-white font-bold text-xl">Rebuttal</div>
-      <!-- Hamburger menu: visible only on small screens -->
-      <div class="md:hidden">
-        <button id="menu-toggle" class="text-white focus:outline-none">
-          <svg class="h-6 w-6 fill-current" viewBox="0 0 24 24">
-            <path d="M4 6h16M4 12h16M4 18h16"/>
-          </svg>
-        </button>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Feed - Rebuttal</title>
+    <script type="module" src="/src/js/router/views/feed.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="bg-gray-100 text-gray-900">
+    <nav class="bg-blue-600 p-4">
+      <div class="container mx-auto flex items-center justify-between">
+        <div class="text-white font-bold text-xl">Rebuttal</div>
+        <div class="hidden md:flex space-x-4">
+          <a href="/feed/feed.html" class="text-white">Feed</a>
+          <a href="/profile/profile.html" class="text-white">Profile</a>
+          <button id="logout-btn" class="text-white">Logout</button>
+        </div>
+        <div class="md:hidden">
+          <button id="menu-toggle" class="focus:outline-none">
+            <svg class="h-6 w-6" fill="none" stroke="white" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+            </svg>
+          </button>
+        </div>
       </div>
-      <!-- Full menu: hidden on small screens -->
-      <div id="menu" class="hidden md:flex space-x-4">
-        <a href="/feed.html" class="text-white">Feed</a>
-        <a href="/profile/profile.html" class="text-white">Profile</a>
-        <button id="logout-btn" class="text-white">Logout</button>
+      <div id="mobile-menu" class="hidden md:hidden">
+        <a href="/feed/feed.html" class="block text-white py-2">Feed</a>
+        <a href="/profile/profile.html" class="block text-white py-2">Profile</a>
+        <button id="logout-btn-mobile" class="block text-white py-2">Logout</button>
       </div>
-    </div>
-  </nav>
-  <script>
-    const toggle = document.getElementById('menu-toggle');
-    const menu = document.getElementById('menu');
-    toggle.addEventListener('click', () => {
-      menu.classList.toggle('hidden');
-    });
-  </script>  
-  <section class="max-w-4xl mx-auto p-6">
-    <div class="flex justify-between mb-4">
-      <input type="text" id="search-posts" placeholder="Search posts..." class="w-1/2 p-2 border rounded">
-      <select id="filter-options" class="p-2 border rounded">
-        <option value="all">All Posts</option>
-        <option value="my-posts">My Posts</option>
-        <option value="recent">Most Recent</option>
-        <option value="most-liked">Most Liked</option>
-      </select>
-    </div>
+    </nav>
 
-    <form id="create-post-form" class="bg-white p-4 rounded shadow mb-6">
-      <h2 class="text-xl mb-4">Create New Post</h2>
-      <input type="text" id="post-title" placeholder="Title" class="w-full p-2 border rounded mb-2" required>
-      <textarea id="post-content" placeholder="Content" class="w-full p-2 border rounded mb-2" required></textarea>
-      <input type="text" id="post-image" placeholder="Image URL (optional)" class="w-full p-2 border rounded mb-2">
-      <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded">Add Post</button>
-    </form>
-    
-  </section>
+    <main class="container mx-auto p-4">
+      <section id="create-post-section" class="mb-6">
+        <form id="create-post-form" class="bg-white p-4 rounded shadow">
+          <h2 class="text-xl mb-4">Create New Post</h2>
+          <input type="text" id="post-title" placeholder="Title" class="w-full p-2 border rounded mb-2" required>
+          <textarea id="post-content" placeholder="Content" class="w-full p-2 border rounded mb-2" required></textarea>
+          <input type="text" id="post-image" placeholder="Image URL (optional)" class="w-full p-2 border rounded mb-2">
+          <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded">Add Post</button>
+        </form>
+      </section>
+      <section id="post-feed" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6"></section>
+      <div id="post-modal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
+        <div class="bg-white p-6 rounded-lg shadow-lg w-96">
+          <h2 id="modal-title" class="text-xl font-bold"></h2>
+          <div id="modal-content"></div>
+          <p id="modal-date" class="text-gray-500 text-sm mt-2"></p>
+          <button id="close-modal" class="bg-gray-500 text-white px-4 py-2 rounded mt-4">Close</button>
+        </div>
+      </div>
+    </main>
 
-  <section class="max-w-6xl mx-auto p-6">
-    <div id="post-feed" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-    </div>
-  </section>
-  
-<div id="post-modal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
-    <div class="bg-white p-6 rounded-lg shadow-lg w-96">
-      <h2 id="modal-title" class="text-xl font-bold"></h2>
-      <p id="modal-content" class="mt-2"></p>
-      <p id="modal-date" class="text-gray-500 text-sm mt-2"></p>
-      <button id="close-modal" class="bg-gray-500 text-white px-4 py-2 rounded mt-4">Close</button>
-    </div>
-  </div>
-  
-
-</body>
+    <script>
+      const menuToggle = document.getElementById("menu-toggle");
+      const mobileMenu = document.getElementById("mobile-menu");
+      menuToggle.addEventListener("click", () => {
+        mobileMenu.classList.toggle("hidden");
+      });
+      const logoutHandler = () => {
+        localStorage.removeItem("user");
+        localStorage.removeItem("apiKey");
+        window.location.href = "/index.html";
+      };
+      const logoutDesktop = document.getElementById("logout-btn");
+      const logoutMobile = document.getElementById("logout-btn-mobile");
+      if (logoutDesktop) logoutDesktop.addEventListener("click", logoutHandler);
+      if (logoutMobile) logoutMobile.addEventListener("click", logoutHandler);
+    </script>
+  </body>
 </html>
