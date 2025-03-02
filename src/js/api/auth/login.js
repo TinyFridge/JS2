@@ -1,5 +1,15 @@
 import { API_AUTH_LOGIN, API_AUTH_KEY } from "../constants.js";
 
+// Only run authGuard on pages that are not public.
+// (If your login page is public, you can skip the auth guard check here.)
+if (!["/", "/index.html"].includes(window.location.pathname.toLowerCase())) {
+  // If the page is not public, enforce authentication.
+  // (Adjust your authGuard logic as needed for mobile.)
+  import("../../utilities/authGuard").then(module => {
+    module.authGuard();
+  });
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   console.log("🔥 login.js loaded on mobile");
 
@@ -85,6 +95,7 @@ document.addEventListener("DOMContentLoaded", () => {
       console.log("Storing API key:", apiKey);
       localStorage.setItem("apiKey", apiKey);
 
+      // Redirect to profile page.
       window.location.href = "/profile/profile.html";
     } catch (error) {
       console.error("Login error:", error);
